@@ -1,8 +1,11 @@
 package hu.webandmore.todo.api.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Todo {
 
-    private int id;
+    private String id;
     private String name;
     private String description;
     private Priority priority;
@@ -10,11 +13,25 @@ public class Todo {
     private long deadline;
     private Location location;
 
-    public int getId() {
+    public Todo() {
+    }
+
+    public Todo(String id, String name, String description, Priority priority, Category category,
+         long deadline, Location location) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.priority = priority;
+        this.category = category;
+        this.deadline = deadline;
+        this.location = location;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

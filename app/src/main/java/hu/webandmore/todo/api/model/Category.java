@@ -1,9 +1,14 @@
 package hu.webandmore.todo.api.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Category {
 
     private int id;
     private String name;
+
+    Category(){}
 
     public int getId() {
         return id;
