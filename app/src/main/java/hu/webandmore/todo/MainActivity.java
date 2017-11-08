@@ -4,6 +4,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
     TextView todoName;
     TextView todoDescription;
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser user = mAuth.getCurrentUser();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         todoName = (TextView) findViewById(R.id.todoName);
         todoDescription = (TextView) findViewById(R.id.todoDescription);
 
-        writeNewTodo("2", "Második", "Ez a második todom!");
+        writeNewTodo("4", "Negyedik", "Ez a negyedik todom!");
+        // TODO - vagy külön-külön todos_user.getUid vagy user modell és felüldefiniálása valahogy
 
     }
 
@@ -41,8 +47,10 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds : dataSnapshot.getChildren()){
                     Todo todo = ds.getValue(Todo.class);
-                    System.out.println("NAME: " + todo.getName());
-                    System.out.println("Description: " + todo.getDescription());
+                    if(todo.getId().contains(user.getUid())) {
+                        System.out.println("NAME: " + todo.getName());
+                        System.out.println("Description: " + todo.getDescription());
+                    }
                 }
 
             }
@@ -55,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void writeNewTodo(String todoId, String name, String description) {
-        String generatedId = "todo_" + todoId;
+        String generatedId = "todo_" + todoId + "_" + user.getUid();
 
         Todo todo = new Todo();
         todo.setId(generatedId);

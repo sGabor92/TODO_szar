@@ -26,13 +26,13 @@ public class LoginPresenter extends Presenter<LoginScreen> {
         mAuth = FirebaseAuth.getInstance();
     }
 
-    void hasLogin(){
+    void hasLogin(final LoginScreen screen){
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    //attemptLogin useremail and password
+                    screen.afterLogin();
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -55,8 +55,7 @@ public class LoginPresenter extends Presenter<LoginScreen> {
                                         + task.getException().getMessage());
                             }
                         } else {
-                            // hideporgessbar
-                            // switchToMainActivity
+                            screen.afterLogin();
                         }
                     }
                 });

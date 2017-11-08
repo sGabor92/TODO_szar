@@ -11,6 +11,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hu.webandmore.todo.MainActivity;
 import hu.webandmore.todo.R;
 import hu.webandmore.todo.ui.register.RegisterActivity;
 
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen {
 
         loginPresenter = new LoginPresenter(this);
 
-        loginPresenter.hasLogin();
+        loginPresenter.hasLogin(this);
 
     }
 
@@ -97,6 +98,12 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen {
     @Override
     public void showError(String errorMsg) {
         Toast.makeText(this, errorMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void afterLogin() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
 }
