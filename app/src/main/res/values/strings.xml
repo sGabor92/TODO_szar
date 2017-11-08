@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">TODO</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="login_or_sign_up_text">Login with an existing account or sign up!</string>
+    <string name="login">Login</string>
+    <string name="email_address">Email address</string>
+    <string name="hint_email_address">Email address...</string>
+    <string name="password">Password</string>
+    <string name="hint_password">Password...</string>
+    <string name="action_login">Login</string>
+    <string name="sign_in">Sign in</string>
+    <string name="dont_you_have_an_account">Don\'t you have an account?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="title_activity_register">RegisterActivity</string>
 </resources>
