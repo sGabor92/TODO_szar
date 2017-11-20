@@ -14,6 +14,7 @@ import butterknife.OnClick;
 import hu.webandmore.todo.MainActivity;
 import hu.webandmore.todo.R;
 import hu.webandmore.todo.ui.register.RegisterActivity;
+import hu.webandmore.todo.ui.todo.TodoActivity;
 
 public class LoginActivity extends AppCompatActivity implements LoginScreen {
 
@@ -102,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen {
 
     @Override
     public void afterLogin() {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TodoActivity.class);
         startActivity(intent);
     }
 

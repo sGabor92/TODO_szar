@@ -9,14 +9,16 @@ public class Todo {
     private String name;
     private String description;
     private Priority priority;
-    private Category category;
+    //private Category category;
+    //private String priority;
+    private String category;
     private long deadline;
     private Location location;
 
     public Todo() {
     }
 
-    public Todo(String id, String name, String description, Priority priority, Category category,
+    public Todo(String id, String name, String description, Priority priority, String category,
          long deadline, Location location) {
         this.id = id;
         this.name = name;
@@ -59,11 +61,19 @@ public class Todo {
         this.priority = priority;
     }
 
-    public Category getCategory() {
+    /*public Category getCategory() {
         return category;
     }
 
     public void setCategory(Category category) {
+        this.category = category;
+    }*/
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
         this.category = category;
     }
 

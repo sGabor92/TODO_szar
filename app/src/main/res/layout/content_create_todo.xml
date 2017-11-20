@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="hu.webandmore.todo.ui.todo.CreateTodoActivity">
+
+    <ScrollView
+        android:id="@+id/todo_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/todoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="@string/todo_name"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:textColorHint="@color/secondaryText"
+                app:errorEnabled="false"
+                android:elevation="2dp">
+
+                <EditText
+                    android:id="@+id/todoName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="@string/name_of_your_todo"
+                    android:inputType="textEmailAddress|textNoSuggestions"
+                    android:textColor="@color/colorBlack"
+                    android:textColorHint="@color/secondaryText"
+                    android:textSize="16sp"
+                    />
+
+                <requestFocus />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/todo_description"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:textColorHint="@color/secondaryText"
+                app:errorEnabled="false"
+                android:elevation="2dp">
+
+                <EditText
+                    android:id="@+id/todoDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:hint="@string/todo_short_description"
+                    android:inputType="text"
+                    android:textColor="@color/colorBlack"
+                    android:textColorHint="@color/secondaryText"
+                    android:textSize="16sp"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/todo_category"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColorHint="@color/secondaryText"
+                app:errorEnabled="false"
+                android:elevation="2dp">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/todoCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/todo_priority"
+                android:textColor="@color/primaryText"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColorHint="@color/secondaryText"
+                app:errorEnabled="false"
+                android:elevation="2dp">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/todoPriority"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="16sp"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="100"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:text="@string/cancel"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorAccent"/>
+
+        <Button
+            android:id="@+id/addNewTodo"
+            android:layout_width="0dp"
+            android:layout_weight="50"
+            android:layout_height="match_parent"
+            android:text="@string/add"
+            android:textColor="@color/colorWhite"
+            android:background="@color/colorPrimary"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

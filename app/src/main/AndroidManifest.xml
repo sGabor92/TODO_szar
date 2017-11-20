@@ -23,6 +23,14 @@
         <activity
             android:name=".ui.register.RegisterActivity"
             android:label="@string/title_activity_register"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.todo.CreateTodoActivity"
+            android:label="@string/title_activity_create_todo"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.todo.TodoActivity"
+            android:label="@string/title_activity_todo"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

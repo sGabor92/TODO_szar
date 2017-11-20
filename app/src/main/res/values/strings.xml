@@ -19,4 +19,30 @@
     <string name="hint_confirm_password">Confirm password...</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="passwords_do_not_match">Passwords do not match!</string>
+    <string name="title_activity_create_todo">Create new Todo</string>
+    <string name="title_activity_todo">Your own Todos</string>
+    <string name="todo_name">TODO name</string>
+    <string name="name_of_your_todo">Name of your TODO</string>
+    <string name="todo_description">TODO description</string>
+    <string name="todo_short_description">TODO short description</string>
+    <string name="todo_category">TODO category</string>
+    <string name="todo_priority">TODO priority</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="required_field">Required field!</string>
+
+    <string-array name="todo_category_spinner_array">
+        <item name="work">Work</item>
+        <item name="home">Home</item>
+        <item name="school">School</item>
+        <item name="entertainment">Entertainment</item>
+        <item name="other">Other</item>
+    </string-array>
+
+    <string-array name="todo_priority_spinner_array">
+        <item name="high">High</item>
+        <item name="low">Low</item>
+        <item name="medium">Medium</item>
+    </string-array>
+
 </resources>
