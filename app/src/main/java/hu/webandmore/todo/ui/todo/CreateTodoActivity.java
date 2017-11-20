@@ -186,7 +186,7 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
         editText.setText(sdf.format(myCalendar.getTime()));
     }
 
-    private void showTimePicker(){
+    private void showTimePicker() {
         mHour = myCalendar.get(Calendar.HOUR_OF_DAY);
         mMinute = myCalendar.get(Calendar.MINUTE);
 
