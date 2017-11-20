@@ -30,6 +30,9 @@
     <string name="cancel">Cancel</string>
     <string name="add">Add</string>
     <string name="required_field">Required field!</string>
+    <string name="todo_location">TODO location</string>
+    <string name="todo_deadline">TODO deadline</string>
+    <string name="deadline_hint">2017-07-31 : 12:30</string>
 
     <string-array name="todo_category_spinner_array">
         <item name="work">Work</item>

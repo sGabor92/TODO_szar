@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Priority;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.Presenter;
@@ -23,7 +24,7 @@ public class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
     }
 
     void writeNewTodo(String todoId, String name, String description,
-                              String category, String priority) {
+                      String category, String priority, Location location, long deadline) {
 
         String generatedId = "todo_" + todoId;
 
@@ -33,6 +34,10 @@ public class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
         todo.setDescription(description);
         todo.setCategory(category);
         todo.setPriority(Priority.valueOf(priority.toUpperCase()));
+        if(location != null) {
+            todo.setLocation(location);
+        }
+        todo.setDeadline(deadline);
 
         mDatabaseRef.child(userTodoRef).child(category).child(generatedId).setValue(todo);
     }
