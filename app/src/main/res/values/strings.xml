@@ -35,6 +35,12 @@
     <string name="deadline_hint">2017-07-31 : 12:30</string>
     <string name="edit">Edit</string>
     <string name="edit_todo_title">Edit TODO</string>
+    <string name="todo_created">TODO created!</string>
+    <string name="todo_edited">TODO edited!</string>
+    <string name="delete">Delete</string>
+    <string name="are_you_sure_delete">Are you sure you want to delete?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string-array name="todo_category_spinner_array">
         <item name="work">Work</item>

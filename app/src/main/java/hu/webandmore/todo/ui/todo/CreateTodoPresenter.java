@@ -26,10 +26,8 @@ public class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
     void writeNewTodo(String todoId, String name, String description,
                       String category, String priority, Location location, long deadline) {
 
-        String generatedId = "todo_" + todoId;
-
         Todo todo = new Todo();
-        todo.setId(generatedId);
+        todo.setId(todoId);
         todo.setName(name);
         todo.setDescription(description);
         todo.setCategory(category);
@@ -39,7 +37,7 @@ public class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
         }
         todo.setDeadline(deadline);
 
-        mDatabaseRef.child(userTodoRef).child(category).child(generatedId).setValue(todo);
+        mDatabaseRef.child(userTodoRef).child(category).child(todoId).setValue(todo);
     }
 
 }

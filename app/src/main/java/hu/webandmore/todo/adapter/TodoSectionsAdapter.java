@@ -9,8 +9,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import hu.webandmore.todo.R;
@@ -86,7 +84,6 @@ public class TodoSectionsAdapter extends StatelessSection {
         itemViewHolder.rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Clicking on item");
                 if (todos.get(position).isExpanded()) {
                     itemViewHolder.mTodoDetailsLayout.setVisibility(View.GONE);
                     todos.get(position).setExpanded(false);
@@ -102,13 +99,16 @@ public class TodoSectionsAdapter extends StatelessSection {
         itemViewHolder.mEditTodo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("Clicking on edit!");
+                System.out.println("POSITION: " + position);
                 Intent intent = new Intent(context, CreateTodoActivity.class);
                 intent.putExtra("isEdited", true);
                 intent.putExtra("id", todos.get(position).getId());
+                intent.putExtra("category", todos.get(position).getCategory());
                 context.startActivity(intent);
             }
         });
+
+
 
     }
 
@@ -122,6 +122,23 @@ public class TodoSectionsAdapter extends StatelessSection {
         HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
 
         headerHolder.mCategoryTitle.setText(categoryTitle);
+    }
+
+    public void removeItem(int position) {
+        todos.remove(position);
+        sectionedRecyclerViewAdapter.notifyItemRemoved(position);
+        sectionedRecyclerViewAdapter.notifyItemRangeChanged(position, todos.size());
+    }
+
+    public void restoreItem(int position, Todo todo) {
+        todos.add(position, todo);
+        sectionedRecyclerViewAdapter.notifyDataSetChanged();
+        sectionedRecyclerViewAdapter.notifyItemInserted(position);
+    }
+
+    public Todo getItem(int position) {
+        int relPos = sectionedRecyclerViewAdapter.getItemCount() - position;
+        return todos.get(relPos);
     }
 
     private class HeaderViewHolder extends RecyclerView.ViewHolder {

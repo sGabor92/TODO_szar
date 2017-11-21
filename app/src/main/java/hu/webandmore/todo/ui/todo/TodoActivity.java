@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +30,7 @@ import hu.webandmore.todo.adapter.TodoSectionsAdapter;
 import hu.webandmore.todo.api.model.Todo;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
-public class TodoActivity extends AppCompatActivity {
+public class TodoActivity extends AppCompatActivity implements TodoScreen {
 
     @BindView(R.id.todoRecyclerView)
     RecyclerView mTodorecyclerView;
@@ -46,6 +47,9 @@ public class TodoActivity extends AppCompatActivity {
     private TodoAdapter todoAdapter;
 
     private SectionedRecyclerViewAdapter sectionAdapter;
+    private TodoSectionsAdapter todoSectionsAdapter;
+
+    private TodoPresenter todoPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +59,10 @@ public class TodoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
+        todoPresenter = new TodoPresenter(this);
 
         sectionAdapter = new SectionedRecyclerViewAdapter();
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addNewTodo);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,6 +78,10 @@ public class TodoActivity extends AppCompatActivity {
 
         llmTodos = new LinearLayoutManager(this);
         llmTodos.setOrientation(LinearLayoutManager.VERTICAL);
+
+        todoPresenter.attachScreen(this);
+
+        todoPresenter.initSwipe();
     }
 
     @Override
@@ -81,17 +91,19 @@ public class TodoActivity extends AppCompatActivity {
         mTodoRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                sectionAdapter.removeAllSections();
+                sectionAdapter.notifyDataSetChanged();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ArrayList<Todo> todosByCategory = new ArrayList<>();
+                    Todo todo = new Todo();
                     for (DataSnapshot dsChild : ds.getChildren()) {
-                        Todo todo = dsChild.getValue(Todo.class);
+                        todo = dsChild.getValue(Todo.class);
                         todosByCategory.add(todo);
                     }
-                    sectionAdapter.addSection(new TodoSectionsAdapter(
-                             getApplicationContext(), sectionAdapter, ds.getKey(), todosByCategory));
+                    todoSectionsAdapter = new TodoSectionsAdapter(
+                            getApplicationContext(), sectionAdapter, ds.getKey(), todosByCategory);
+                    sectionAdapter.addSection(todo.getCategory() ,todoSectionsAdapter);
                 }
-                mTodorecyclerView.setLayoutManager(llmTodos);
-                mTodorecyclerView.setAdapter(sectionAdapter);
             }
 
             @Override
@@ -104,7 +116,36 @@ public class TodoActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        mTodorecyclerView.setLayoutManager(llmTodos);
+        mTodorecyclerView.setAdapter(sectionAdapter);
     }
 
+    @Override
+    public RecyclerView getTodosRecyclerView() {
+        if(mTodorecyclerView == null) {
+            System.out.println("NULL!!!");
+        }
+        return mTodorecyclerView;
+    }
+
+    @Override
+    public void removeTodo(int position) {
+        Log.i("TODOACTIVITY", "Delete todo");
+        int relativePosition = sectionAdapter.getPositionInSection(position);
+        todoSectionsAdapter.removeItem(relativePosition);
+    }
+
+    @Override
+    public void restoreTodo(int position) {
+        Log.i("TODOACTIVITY", "Restore todo: " + position);
+        int relativePosition = sectionAdapter.getPositionInSection(position);
+        /*Todo removedTodo = todoSectionsAdapter.getItem(relativePosition);
+        todoSectionsAdapter.removeItem(relativePosition);
+        todoSectionsAdapter.restoreItem(relativePosition, removedTodo);*/
+    }
+
+    @Override
+    public Todo getItem(int position) {
+        return todoSectionsAdapter.getItem(position);
+    }
 }
