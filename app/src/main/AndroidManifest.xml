@@ -36,7 +36,8 @@
         <activity
             android:name=".ui.todo.CreateTodoActivity"
             android:label="@string/title_activity_create_todo"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".ui.todo.TodoActivity"/>
         <activity
             android:name=".ui.todo.TodoActivity"
             android:label="@string/title_activity_todo"

@@ -87,9 +87,9 @@ public class TodoActivity extends AppCompatActivity {
                         Todo todo = dsChild.getValue(Todo.class);
                         todosByCategory.add(todo);
                     }
-                    sectionAdapter.addSection(new TodoSectionsAdapter(getApplicationContext(), ds.getKey(), todosByCategory));
+                    sectionAdapter.addSection(new TodoSectionsAdapter(
+                             getApplicationContext(), sectionAdapter, ds.getKey(), todosByCategory));
                 }
-                /*todoAdapter = new TodoAdapter(getApplicationContext(), todos);*/
                 mTodorecyclerView.setLayoutManager(llmTodos);
                 mTodorecyclerView.setAdapter(sectionAdapter);
             }

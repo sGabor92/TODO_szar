@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -50,6 +51,12 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
     @BindView(R.id.todoDeadline)
     EditText mTodoDeadline;
 
+    @BindView(R.id.addNewTodo)
+    Button mAddTodo;
+
+    @BindView(R.id.editTodo)
+    Button mEditTodo;
+
     PlaceAutocompleteFragment autocompleteFragment;
 
     CreateTodoPresenter createTodoPresenter;
@@ -62,6 +69,9 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
     int mHour;
     int mMinute;
 
+    boolean isEdited = false;
+    private String todoId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +81,19 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
+
+        Bundle bundle = getIntent().getExtras();
+        if(getIntent().hasExtra("isEdited")){
+            isEdited = true;
+            todoId = bundle.getString("id");
+            fillEditedTodoDetails();
+        }
+
+        if(isEdited) {
+            setTitle(getString(R.string.edit_todo_title));
+            mAddTodo.setVisibility(View.GONE);
+            mEditTodo.setVisibility(View.VISIBLE);
+        }
 
         createTodoPresenter = new CreateTodoPresenter();
 
@@ -156,6 +179,11 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
         }
     }
 
+    @OnClick(R.id.editTodo)
+    public void editTodo(){
+        System.out.println("EDIT!!!!");
+    }
+
     @Override
     public void showError(String errorMsg) {
 
@@ -205,6 +233,10 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();
+    }
+
+    public void fillEditedTodoDetails() {
+        System.out.println("Fill todo");
     }
 
 }

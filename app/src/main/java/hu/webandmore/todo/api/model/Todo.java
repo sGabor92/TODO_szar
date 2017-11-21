@@ -2,6 +2,9 @@ package hu.webandmore.todo.api.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 @IgnoreExtraProperties
 public class Todo {
 
@@ -14,6 +17,10 @@ public class Todo {
     private String category;
     private long deadline;
     private Location location;
+    private boolean isExpanded = false;
+
+    private String myFormat = "yyyy-MM-dd : HH:mm";
+    private SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
 
     public Todo() {
     }
@@ -91,6 +98,18 @@ public class Todo {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
+    }
+
+    public String getDeadlineString() {
+        return sdf.format(deadline);
     }
 }
 
