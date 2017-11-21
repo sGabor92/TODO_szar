@@ -12,4 +12,8 @@
     <color name="secondaryText">#757575</color>
     <color name="dividerColor">#BDBDBD</color>
 
+    <color name="priorityHigh">#c53932</color>
+    <color name="priorityMedium">#e99326</color>
+    <color name="priorityLow">#54c532</color>
+
 </resources>

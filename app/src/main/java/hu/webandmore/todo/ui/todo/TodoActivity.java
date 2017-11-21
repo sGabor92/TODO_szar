@@ -25,7 +25,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import hu.webandmore.todo.R;
 import hu.webandmore.todo.adapter.TodoAdapter;
+import hu.webandmore.todo.adapter.TodoSectionsAdapter;
 import hu.webandmore.todo.api.model.Todo;
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
 public class TodoActivity extends AppCompatActivity {
 
@@ -40,9 +42,10 @@ public class TodoActivity extends AppCompatActivity {
 
     private static String userTodoRef;
 
-    private ArrayList<Todo> todos = new ArrayList<>();
     private LinearLayoutManager llmTodos;
     private TodoAdapter todoAdapter;
+
+    private SectionedRecyclerViewAdapter sectionAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,8 @@ public class TodoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
+
+        sectionAdapter = new SectionedRecyclerViewAdapter();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.addNewTodo);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,17 +82,16 @@ public class TodoActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    System.out.println("CATEGORY: " + ds.getKey());
+                    ArrayList<Todo> todosByCategory = new ArrayList<>();
                     for (DataSnapshot dsChild : ds.getChildren()) {
                         Todo todo = dsChild.getValue(Todo.class);
-                        System.out.println("NAME: " + todo.getName());
-                        System.out.println("Description: " + todo.getDescription());
-                        todos.add(todo);
+                        todosByCategory.add(todo);
                     }
+                    sectionAdapter.addSection(new TodoSectionsAdapter(getApplicationContext(), ds.getKey(), todosByCategory));
                 }
-                todoAdapter = new TodoAdapter(getApplicationContext(), todos);
+                /*todoAdapter = new TodoAdapter(getApplicationContext(), todos);*/
                 mTodorecyclerView.setLayoutManager(llmTodos);
-                mTodorecyclerView.setAdapter(todoAdapter);
+                mTodorecyclerView.setAdapter(sectionAdapter);
             }
 
             @Override
