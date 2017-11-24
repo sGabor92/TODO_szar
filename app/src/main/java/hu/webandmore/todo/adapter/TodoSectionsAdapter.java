@@ -1,9 +1,17 @@
 package hu.webandmore.todo.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -15,6 +23,8 @@ import hu.webandmore.todo.R;
 import hu.webandmore.todo.api.model.Priority;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.todo.CreateTodoActivity;
+import hu.webandmore.todo.ui.todo.TodoPresenter;
+import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
@@ -25,8 +35,9 @@ public class TodoSectionsAdapter extends StatelessSection {
     private String categoryTitle;
     private ArrayList<Todo> todos = new ArrayList<>();
     private SectionedRecyclerViewAdapter sectionedRecyclerViewAdapter;
+    private TodoPresenter todoPresenter;
 
-    public TodoSectionsAdapter(Context context,
+    public TodoSectionsAdapter(Context context, TodoPresenter todoPresenter,
                                SectionedRecyclerViewAdapter sectionedRecyclerViewAdapter,
                                String categoryTitle, ArrayList<Todo> todos) {
         super(new SectionParameters.Builder(R.layout.list_item_todo)
@@ -34,10 +45,10 @@ public class TodoSectionsAdapter extends StatelessSection {
                 .build());
 
         this.context = context;
+        this.todoPresenter = todoPresenter;
         this.sectionedRecyclerViewAdapter = sectionedRecyclerViewAdapter;
         this.categoryTitle = categoryTitle;
         this.todos = todos;
-
     }
 
     @Override
@@ -108,7 +119,13 @@ public class TodoSectionsAdapter extends StatelessSection {
             }
         });
 
-
+        itemViewHolder.mDeleteTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("TODO: " + todos.get(position).getId());
+                todoPresenter.showDeletePopup(todos.get(position), position);
+            }
+        });
 
     }
 
@@ -124,10 +141,10 @@ public class TodoSectionsAdapter extends StatelessSection {
         headerHolder.mCategoryTitle.setText(categoryTitle);
     }
 
-    public void removeItem(int position) {
-        todos.remove(position);
-        sectionedRecyclerViewAdapter.notifyItemRemoved(position);
-        sectionedRecyclerViewAdapter.notifyItemRangeChanged(position, todos.size());
+    public void removeItem(Todo todo, int position) {
+        todos.remove(todo);
+        sectionedRecyclerViewAdapter.notifyItemRemovedFromSection(todo.getCategory(), position);
+        sectionedRecyclerViewAdapter.notifyDataSetChanged();
     }
 
     public void restoreItem(int position, Todo todo) {
@@ -137,8 +154,7 @@ public class TodoSectionsAdapter extends StatelessSection {
     }
 
     public Todo getItem(int position) {
-        int relPos = sectionedRecyclerViewAdapter.getItemCount() - position;
-        return todos.get(relPos);
+        return todos.get(position);
     }
 
     private class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -162,6 +178,7 @@ public class TodoSectionsAdapter extends StatelessSection {
         private final TextView mTodoDeadline;
         private final TextView mTodoLocation;
         private final ImageButton mEditTodo;
+        private final ImageButton mDeleteTodo;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -174,6 +191,7 @@ public class TodoSectionsAdapter extends StatelessSection {
             mTodoDeadline = (TextView) itemView.findViewById(R.id.todoDeadline);
             mTodoLocation = (TextView) itemView.findViewById(R.id.todoLocation);
             mEditTodo = (ImageButton) itemView.findViewById(R.id.editTodo);
+            mDeleteTodo = (ImageButton) itemView.findViewById(R.id.deleteTodo);
         }
     }
 }
