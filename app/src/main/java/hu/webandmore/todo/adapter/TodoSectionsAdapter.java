@@ -84,12 +84,17 @@ public class TodoSectionsAdapter extends StatelessSection {
             itemViewHolder.mTodoDeadline.setVisibility(View.GONE);
         }
 
-        if (priority == Priority.HIGH) {
-            itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_high));
-        } else if (priority == Priority.MEDIUM) {
-            itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_medium));
+        if(todos.get(position).getDeadline() != 0 &&
+                todos.get(position).getDeadline() < System.currentTimeMillis()){
+            itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_expired));
         } else {
-            itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_low));
+            if (priority == Priority.HIGH) {
+                itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_high));
+            } else if (priority == Priority.MEDIUM) {
+                itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_medium));
+            } else {
+                itemViewHolder.mTodoBackground.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_priority_low));
+            }
         }
 
         itemViewHolder.rootView.setOnClickListener(new View.OnClickListener() {

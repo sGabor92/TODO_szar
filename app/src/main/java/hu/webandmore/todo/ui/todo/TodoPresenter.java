@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import hu.webandmore.todo.R;
+import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.Presenter;
 
@@ -51,5 +52,10 @@ public class TodoPresenter extends Presenter<TodoScreen> {
             }
         });
         alert.show();
+    }
+
+    public void addNewGeofencArea(Location location) {
+        screen.addElementToGeofenceList(location.getAddress(),
+                location.getLatitude(), location.getLongitude());
     }
 }

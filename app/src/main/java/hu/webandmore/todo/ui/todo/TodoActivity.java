@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import hu.webandmore.todo.BuildConfig;
 import hu.webandmore.todo.Manifest;
 import hu.webandmore.todo.R;
@@ -48,6 +50,7 @@ import hu.webandmore.todo.adapter.TodoSectionsAdapter;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.geo.GeofenceErrorMessages;
 import hu.webandmore.todo.geo.GeofenceTransitionsIntentService;
+import hu.webandmore.todo.utils.Util;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
 public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCompleteListener<Void> {
@@ -70,6 +73,12 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
     private SectionedRecyclerViewAdapter sectionAdapter;
     private TodoSectionsAdapter todoSectionsAdapter;
 
+    @BindView(R.id.geofencingOn)
+    ImageButton mGeofencingOn;
+
+    @BindView(R.id.geofencingOff)
+    ImageButton mGeofencingOff;
+
     private TodoPresenter todoPresenter;
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
@@ -86,9 +95,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
      */
     private GeofencingClient mGeofencingClient;
 
-    /**
-     * The list of geofences used in this sample.
-     */
     private ArrayList<Geofence> mGeofenceList;
 
     /**
@@ -100,6 +106,8 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
 
     private static final String PACKAGE_NAME = "com.google.android.gms.location.Geofence";
     static final String GEOFENCES_ADDED_KEY = PACKAGE_NAME + ".GEOFENCES_ADDED_KEY";
+
+    private boolean geofencingOn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +147,11 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
+        if(getGeofencesAdded()) {
+            mGeofencingOn.setVisibility(View.GONE);
+            mGeofencingOff.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -151,6 +164,7 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
             public void onDataChange(DataSnapshot dataSnapshot) {
                 sectionAdapter.removeAllSections();
                 sectionAdapter.notifyDataSetChanged();
+                mGeofenceList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     ArrayList<Todo> todosByCategory = new ArrayList<>();
                     Todo todo = new Todo();
@@ -192,13 +206,11 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
         mTodorecyclerView.setLayoutManager(llmTodos);
         mTodorecyclerView.setAdapter(sectionAdapter);
 
-        //addGeofencesHandler();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        removeGeofencesHandler();
     }
 
     @Override
@@ -230,7 +242,11 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
      * Adds geofences, which sets alerts to be notified when the device enters or exits one of the
      * specified geofences. Handles the success or failure results returned by addGeofences().
      */
-    public void addGeofencesHandler() {
+    @OnClick(R.id.geofencingOn)
+    public void addGeofencesHandler(View view) {
+        geofencingOn = true;
+        mGeofencingOn.setVisibility(View.GONE);
+        mGeofencingOff.setVisibility(View.VISIBLE);
         if (!checkPermissions()) {
             mPendingGeofenceTask = PendingGeofenceTask.ADD;
             requestPermissions();
@@ -258,7 +274,11 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
      * Removes geofences, which stops further notifications when the device enters or exits
      * previously registered geofences.
      */
-    public void removeGeofencesHandler() {
+    @OnClick(R.id.geofencingOff)
+    public void removeGeofencesHandler(View view) {
+        geofencingOn = false;
+        mGeofencingOff.setVisibility(View.GONE);
+        mGeofencingOn.setVisibility(View.VISIBLE);
         if (!checkPermissions()) {
             mPendingGeofenceTask = PendingGeofenceTask.REMOVE;
             requestPermissions();
@@ -329,6 +349,7 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
      * This sample hard codes geofence data. A real app might dynamically create geofences based on
      * the user's location.
      */
+    @Override
     public void addElementToGeofenceList(String address, double latitude, double longitude) {
 
         mGeofenceList.add(new Geofence.Builder()
@@ -506,6 +527,11 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen, OnCom
     private boolean getGeofencesAdded() {
         return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
                 GEOFENCES_ADDED_KEY, false);
+    }
+
+    @OnClick(R.id.logout)
+    public void logout(){
+        Util.userLogout(this);
     }
 
 }
