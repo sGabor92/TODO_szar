@@ -88,6 +88,7 @@ public class LoginActivity extends AppCompatActivity implements LoginScreen {
         } else {
             loginPresenter.signIn(this, email, password);
         }
+
     }
 
     @OnClick(R.id.signUp)
