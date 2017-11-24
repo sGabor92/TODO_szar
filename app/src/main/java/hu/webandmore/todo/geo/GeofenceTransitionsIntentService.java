@@ -26,7 +26,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
     private static final String TAG = "GeofenceTransitions";
 
     public GeofenceTransitionsIntentService() {
-        // Use the TAG to name the worker thread.
         super(TAG);
         Log.i(TAG, "Constructor calling");
     }
@@ -42,25 +41,19 @@ public class GeofenceTransitionsIntentService extends IntentService {
             return;
         }
 
-        // Get the transition type.
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
-        // Test that the reported transition was of interest.
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 
-            // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
-            // Get the transition details as a String.
             String geofenceTransitionDetails = getGeofenceTransitionDetails(geofenceTransition,
                     triggeringGeofences);
 
-            // Send notification and log the transition details.
             sendNotification(geofenceTransitionDetails);
             Log.i(TAG, geofenceTransitionDetails);
         } else {
-            // Log the error.
             Log.e(TAG, getString(R.string.invalid_type));
         }
     }
@@ -78,7 +71,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         String geofenceTransitionString = getTransitionString(geofenceTransition);
 
-        // Get the Ids of each geofence that was triggered.
         ArrayList<String> triggeringGeofencesIdsList = new ArrayList<>();
         for (Geofence geofence : triggeringGeofences) {
             triggeringGeofencesIdsList.add(geofence.getRequestId());
@@ -93,26 +85,17 @@ public class GeofenceTransitionsIntentService extends IntentService {
      * If the user clicks the notification, control goes to the MainActivity.
      */
     private void sendNotification(String notificationDetails) {
-        // Create an explicit content Intent that starts the main Activity.
         Intent notificationIntent = new Intent(getApplicationContext(), TodoActivity.class);
 
-        // Construct a task stack.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Add the main Activity to the task stack as the parent.
         stackBuilder.addParentStack(TodoActivity.class);
-
-        // Push the content Intent onto the stack.
         stackBuilder.addNextIntent(notificationIntent);
-
-        // Get a PendingIntent containing the entire back stack.
         PendingIntent notificationPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
-        // Define the notification settings.
         builder.setSmallIcon(R.drawable.ic_my_location_accent)
                 // In a real app, you may want to use a library like Volley
                 // to decode the Bitmap.
@@ -120,7 +103,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                         R.drawable.ic_my_location_accent))
                 .setColor(Color.RED)
                 .setContentTitle(notificationDetails)
-                .setContentText(getString(R.string.geofence_transition_notification_text))
+                .setContentText(getString(R.string.there_is_a_todo_for_you))
                 .setContentIntent(notificationPendingIntent);
 
         // Dismiss notification once the user touches it.
