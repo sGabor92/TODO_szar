@@ -28,10 +28,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
     public GeofenceTransitionsIntentService() {
         // Use the TAG to name the worker thread.
         super(TAG);
+        Log.i(TAG, "Constructor calling");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.i(TAG, "Intent");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceErrorMessages.getErrorString(this,

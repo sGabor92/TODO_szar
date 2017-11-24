@@ -46,7 +46,7 @@
             android:label="@string/title_activity_todo"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <service android:name=".GeofenceTransitionsIntentService"/>
+        <service android:name=".geo.GeofenceTransitionsIntentService" />
 
     </application>
 
