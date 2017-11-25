@@ -157,12 +157,12 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
     @OnClick(R.id.addNewTodo)
     public void addNewTodo() {
 
-        int todoId = PrefUtils.getIdFromPrefs(
+        /*int todoId = PrefUtils.getIdFromPrefs(
                 this,
                 PrefUtils.PREFS_TODO_ID_KEY,
-                0);
+                0);*/
 
-        String todoIdString = "todo_" + String.valueOf(todoId++);
+        String todoIdString = "todo_" + System.currentTimeMillis();
         String name = mTodoName.getText().toString();
         String description = mTodoDescription.getText().toString();
         String category = mTodoCategorySpinner.getSelectedItem().toString();
@@ -191,7 +191,7 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
         } else {
             createTodoPresenter.writeNewTodo(todoIdString, name, description, category,
                     priority, location, deadline);
-            PrefUtils.saveIdPrefs(this, PrefUtils.PREFS_TODO_ID_KEY, todoId++);
+            //PrefUtils.saveIdPrefs(this, PrefUtils.PREFS_TODO_ID_KEY, todoId++);
             Toast.makeText(this, R.string.todo_created, Toast.LENGTH_SHORT).show();
             finish();
         }
@@ -200,7 +200,7 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
     @OnClick(R.id.editTodo)
     public void editTodo(){
 
-        String todoIdString = String.valueOf(todoId);
+        String todoIdString = todoId;
         String name = mTodoName.getText().toString();
         String description = mTodoDescription.getText().toString();
         String category = mTodoCategorySpinner.getSelectedItem().toString();

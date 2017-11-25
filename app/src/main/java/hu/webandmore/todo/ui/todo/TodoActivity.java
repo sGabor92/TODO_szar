@@ -37,7 +37,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.onesignal.OneSignal;
 
 import java.util.ArrayList;
 
@@ -46,7 +45,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.webandmore.todo.BuildConfig;
 import hu.webandmore.todo.Manifest;
-import hu.webandmore.todo.notification.NotificationOpenedHandler;
 import hu.webandmore.todo.R;
 import hu.webandmore.todo.adapter.TodoSectionsAdapter;
 import hu.webandmore.todo.api.model.Todo;
@@ -63,11 +61,12 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     @BindView(R.id.todoRecyclerView)
     RecyclerView mTodorecyclerView;
 
-    DatabaseReference mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+
+    DatabaseReference mDatabaseRef;
     DatabaseReference mTodoRef;
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseUser user = mAuth.getCurrentUser();
+    private FirebaseAuth mAuth;
+    FirebaseUser user;
 
     private static String userTodoRef;
 
@@ -110,9 +109,10 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        OneSignal.startInit(this)
-                .setNotificationOpenedHandler(new NotificationOpenedHandler())
-                .init();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
 
         ButterKnife.bind(this);
         todoPresenter = new TodoPresenter(this);
