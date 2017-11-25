@@ -9,10 +9,11 @@ import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Priority;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.Presenter;
+import hu.webandmore.todo.utils.Util;
 
 public class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
 
-    private DatabaseReference mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference mDatabaseRef = Util.getDatabase().getReference();
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user = mAuth.getCurrentUser();

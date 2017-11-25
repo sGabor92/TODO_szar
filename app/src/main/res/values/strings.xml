@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">TODO</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="app_name">whatToDo</string>
+    <string name="title_activity_login">Login</string>
     <string name="login_or_sign_up_text">Login with an existing account or sign up!</string>
     <string name="login">Login</string>
     <string name="email_address">Email address</string>
@@ -57,6 +57,8 @@
     <string name="location_permission">Location permission</string>
     <string name="settings">Settings</string>
     <string name="there_is_a_todo_for_you">There is a todo for you!</string>
+    <string name="deadline_approaching">Deadline approaching!</string>
+    <string name="login_activity_title">Login</string>
 
     <string-array name="todo_category_spinner_array">
         <item name="work">Work</item>

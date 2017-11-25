@@ -1,19 +1,22 @@
 package hu.webandmore.todo.ui.todo;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,10 +38,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +53,6 @@ import hu.webandmore.todo.R;
 import hu.webandmore.todo.adapter.TodoSectionsAdapter;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.geo.GeofenceErrorMessages;
-import hu.webandmore.todo.geo.GeofenceTransitionsIntentService;
 import hu.webandmore.todo.utils.Util;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
@@ -60,7 +63,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
 
     @BindView(R.id.todoRecyclerView)
     RecyclerView mTodorecyclerView;
-
 
     DatabaseReference mDatabaseRef;
     DatabaseReference mTodoRef;
@@ -85,7 +87,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
-
     private enum PendingGeofenceTask {
         ADD, REMOVE, NONE
     }
@@ -93,6 +94,7 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     private ArrayList<Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
 
+    //PendingGeofenceTask.ADD - ra kapcsolva egyből tesztelhető a geofence - rendes a NONE
     private PendingGeofenceTask mPendingGeofenceTask = PendingGeofenceTask.ADD;
 
     private static final String PACKAGE_NAME = "com.google.android.gms.location.Geofence";
@@ -102,15 +104,21 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
 
     private LocationCallback mLocationCallback;
 
+    private String myFormat = "HH:mm";
+    private SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+
+    private boolean needNotification = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("ONCREATE", "OnCreate calling");
+
         setContentView(R.layout.activity_todo);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+        mDatabaseRef = Util.getDatabase().getReference();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
@@ -157,14 +165,8 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
             }
         };
 
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @Override
-    protected void onStart() {
-        super.onStart();
-
         mTodoRef.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 sectionAdapter.removeAllSections();
@@ -181,6 +183,12 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
                                     todo.getLocation().getLatitude(),
                                     todo.getLocation().getLongitude());
                         }
+                        long timeDiff = todo.getDeadline() - System.currentTimeMillis();
+                        if(timeDiff >= 0 && timeDiff < 86400000) {
+                            if(needNotification) {
+                                sendDeadlineNotification(todo.getName(), todo.getDeadline());
+                            }
+                        }
                         todosByCategory.add(todo);
                     }
                     todoSectionsAdapter = new TodoSectionsAdapter(
@@ -193,13 +201,16 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
                     Log.i(TAG, "Calling performPendingGeofenceTask");
                     performPendingGeofenceTask();
                 }
+                needNotification = false;
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
+
         });
+
 
     }
 
@@ -239,7 +250,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
         geofencingOn = true;
         mGeofencingOn.setVisibility(View.GONE);
         mGeofencingOff.setVisibility(View.VISIBLE);
-        //startLocationMonitor();
         if (!checkPermissions()) {
             mPendingGeofenceTask = PendingGeofenceTask.ADD;
             requestPermissions();
@@ -257,6 +267,7 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
 
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
                 .addOnCompleteListener(this);
+        Log.i(TAG, "Geofences added!");
     }
 
     @OnClick(R.id.geofencingOff)
@@ -289,8 +300,8 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
             Log.i(TAG, "OnComplete successful");
             updateGeofencesAdded(!getGeofencesAdded());
 
-            int messageId = !getGeofencesAdded() ? R.string.geofences_added :
-                    R.string.geofences_removed;
+            int messageId = !getGeofencesAdded() ? R.string.geofences_removed :
+                    R.string.geofences_added;
 
             Log.i(TAG, "Message: " + getString(messageId));
             showSnackbar(getString(messageId));
@@ -434,6 +445,36 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     @OnClick(R.id.logout)
     public void logout() {
         Util.userLogout(this);
+    }
+
+    public void sendDeadlineNotification(String name, long notificationDate) {
+        Intent notificationIntent = new Intent(this, TodoActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        String remainingTime = sdf.format(notificationDate - System.currentTimeMillis());
+
+        PendingIntent pIntent = PendingIntent.getActivity(this,
+                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new
+                NotificationCompat.Builder(this)
+                .setContentTitle(getString(R.string.deadline_approaching))
+                .setContentText(name + " | Remaining time: " + remainingTime)
+                .setSmallIcon(R.drawable.ic_deadline_accent)
+                .setPriority(Notification.PRIORITY_MAX)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_deadline_accent))
+                .setColor(ContextCompat.getColor(this, R.color.colorAccent))
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true);
+        NotificationManager notifyMgr =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        assert notifyMgr != null;
+        Log.i("Notification", "Sending notification");
+        notifyMgr.notify(Util.getID(), builder.build());
     }
 
 }

@@ -44,6 +44,7 @@ import hu.webandmore.todo.api.model.Category;
 import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.utils.PrefUtils;
+import hu.webandmore.todo.utils.Util;
 
 public class CreateTodoActivity extends AppCompatActivity implements CreateTodoScreen {
 
@@ -273,7 +274,7 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        DatabaseReference mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference mDatabaseRef = Util.getDatabase().getReference();
         assert user != null;
         String userEndpoint = "todos_" + user.getUid();
         DatabaseReference mTodoRef = mDatabaseRef.child(userEndpoint).child(todoCategory);

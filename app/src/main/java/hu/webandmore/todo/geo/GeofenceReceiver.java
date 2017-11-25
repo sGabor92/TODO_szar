@@ -20,6 +20,7 @@ import java.util.List;
 
 import hu.webandmore.todo.R;
 import hu.webandmore.todo.ui.todo.TodoActivity;
+import hu.webandmore.todo.utils.Util;
 
 public class GeofenceReceiver extends BroadcastReceiver {
 
@@ -72,12 +73,12 @@ public class GeofenceReceiver extends BroadcastReceiver {
 
     private void sendNotification(Context context, String notificationDetails) {
         Intent notificationIntent = new Intent(context, TodoActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(TodoActivity.class);
-        stackBuilder.addNextIntent(notificationIntent);
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent notificationPendingIntent = PendingIntent.getActivity(context,
+                0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
@@ -100,7 +101,8 @@ public class GeofenceReceiver extends BroadcastReceiver {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        assert mNotificationManager != null;
+        mNotificationManager.notify(Util.getID(), builder.build());
     }
 
     private String getTransitionString(Context context, int transitionType) {
