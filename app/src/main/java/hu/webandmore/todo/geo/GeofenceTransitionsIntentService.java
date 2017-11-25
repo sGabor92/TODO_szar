@@ -24,6 +24,7 @@ import hu.webandmore.todo.ui.todo.TodoActivity;
 public class GeofenceTransitionsIntentService extends IntentService {
 
     private static final String TAG = "GeofenceTransitions";
+    protected static final String GeofenceTransitionIntent = "hu.webandmore.action.ACTION_RECEIVE";
 
     public GeofenceTransitionsIntentService() {
         super(TAG);
@@ -42,6 +43,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
 
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
+        Intent broadcastIntent = new Intent(GeofenceTransitionIntent);
 
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
@@ -52,6 +54,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
                     triggeringGeofences);
 
             sendNotification(geofenceTransitionDetails);
+            broadcastIntent.putExtra("transitionData", geofenceTransitionDetails);
+            sendBroadcast(broadcastIntent);
             Log.i(TAG, geofenceTransitionDetails);
         } else {
             Log.e(TAG, getString(R.string.invalid_type));

@@ -303,11 +303,13 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     }
 
     private PendingIntent getGeofencePendingIntent() {
+        Log.i(TAG, "PENDING INTENT");
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
-        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        Intent intent = new Intent("hu.webandmore.action.ACTION_RECEIVE");
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override

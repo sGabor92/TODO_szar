@@ -48,6 +48,11 @@
 
         <service android:name=".geo.GeofenceTransitionsIntentService" />
 
+        <receiver android:name=".geo.GeofenceReceiver" >
+            <intent-filter>
+                <action android:name="hu.webandmore.action.ACTION_RECEIVE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
