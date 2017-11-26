@@ -10,10 +10,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import hu.webandmore.todo.MainActivity;
 import hu.webandmore.todo.ui.todo.TodoActivity;
 
-public class RegisterPresenter {
+class RegisterPresenter {
     private static String TAG = "RegisterPresenter";
 
     private FirebaseAuth mAuth;

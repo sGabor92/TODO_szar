@@ -1,17 +1,9 @@
 package hu.webandmore.todo.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -24,7 +16,6 @@ import hu.webandmore.todo.api.model.Priority;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.todo.CreateTodoActivity;
 import hu.webandmore.todo.ui.todo.TodoPresenter;
-import io.github.luizgrp.sectionedrecyclerviewadapter.Section;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection;
@@ -152,16 +143,6 @@ public class TodoSectionsAdapter extends StatelessSection {
         sectionedRecyclerViewAdapter.notifyDataSetChanged();
     }
 
-    public void restoreItem(int position, Todo todo) {
-        todos.add(position, todo);
-        sectionedRecyclerViewAdapter.notifyDataSetChanged();
-        sectionedRecyclerViewAdapter.notifyItemInserted(position);
-    }
-
-    public Todo getItem(int position) {
-        return todos.get(position);
-    }
-
     private class HeaderViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView mCategoryTitle;
@@ -169,7 +150,7 @@ public class TodoSectionsAdapter extends StatelessSection {
         HeaderViewHolder(View view) {
             super(view);
 
-            mCategoryTitle = (TextView) view.findViewById(R.id.categoryHeader);
+            mCategoryTitle = view.findViewById(R.id.categoryHeader);
         }
     }
 
@@ -189,14 +170,14 @@ public class TodoSectionsAdapter extends StatelessSection {
             super(itemView);
 
             rootView = itemView;
-            mTodoName = (TextView) itemView.findViewById(R.id.todoName);
-            mTodoBackground = (LinearLayout) itemView.findViewById(R.id.todoBackground);
-            mTodoDetailsLayout = (LinearLayout) itemView.findViewById(R.id.detailsLayout);
-            mTodoDetails = (TextView) itemView.findViewById(R.id.todoDescription);
-            mTodoDeadline = (TextView) itemView.findViewById(R.id.todoDeadline);
-            mTodoLocation = (TextView) itemView.findViewById(R.id.todoLocation);
-            mEditTodo = (ImageButton) itemView.findViewById(R.id.editTodo);
-            mDeleteTodo = (ImageButton) itemView.findViewById(R.id.deleteTodo);
+            mTodoName = itemView.findViewById(R.id.todoName);
+            mTodoBackground = itemView.findViewById(R.id.todoBackground);
+            mTodoDetailsLayout = itemView.findViewById(R.id.detailsLayout);
+            mTodoDetails = itemView.findViewById(R.id.todoDescription);
+            mTodoDeadline = itemView.findViewById(R.id.todoDeadline);
+            mTodoLocation = itemView.findViewById(R.id.todoLocation);
+            mEditTodo = itemView.findViewById(R.id.editTodo);
+            mDeleteTodo = itemView.findViewById(R.id.deleteTodo);
         }
     }
 }

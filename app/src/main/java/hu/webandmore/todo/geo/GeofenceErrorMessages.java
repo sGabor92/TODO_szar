@@ -9,22 +9,14 @@ import com.google.android.gms.location.GeofenceStatusCodes;
 import hu.webandmore.todo.R;
 
 public class GeofenceErrorMessages {
-    /**
-     * Prevents instantiation.
-     */
+
     private GeofenceErrorMessages() {}
 
-    /**
-     * Returns the error string for a geofencing exception.
-     */
     public static String getErrorString(Context context, Exception e) {
         return context.getResources().getString(R.string.unknown_geofence_error);
     }
 
-    /**
-     * Returns the error string for a geofencing error code.
-     */
-    public static String getErrorString(Context context, int errorCode) {
+    static String getErrorString(Context context, int errorCode) {
         Resources mResources = context.getResources();
         switch (errorCode) {
             case GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE:

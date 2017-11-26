@@ -3,10 +3,7 @@ package hu.webandmore.todo.ui.todo;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -27,11 +24,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -39,11 +34,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hu.webandmore.todo.R;
-import hu.webandmore.todo.adapter.TodoSectionsAdapter;
-import hu.webandmore.todo.api.model.Category;
 import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Todo;
-import hu.webandmore.todo.utils.PrefUtils;
 import hu.webandmore.todo.utils.Util;
 
 public class CreateTodoActivity extends AppCompatActivity implements CreateTodoScreen {

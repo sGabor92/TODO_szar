@@ -8,12 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import hu.webandmore.todo.MainActivity;
 import hu.webandmore.todo.R;
 import hu.webandmore.todo.ui.register.RegisterActivity;
 import hu.webandmore.todo.ui.todo.TodoActivity;

@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import hu.webandmore.todo.ui.Presenter;
 
-public class LoginPresenter extends Presenter<LoginScreen> {
+class LoginPresenter extends Presenter<LoginScreen> {
 
     private static String TAG = "LoginPresenter";
 

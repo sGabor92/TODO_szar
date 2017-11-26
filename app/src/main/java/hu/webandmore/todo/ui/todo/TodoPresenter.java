@@ -2,16 +2,13 @@ package hu.webandmore.todo.ui.todo;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Paint;
 import android.support.v7.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import hu.webandmore.todo.R;
-import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.Presenter;
 import hu.webandmore.todo.utils.Util;
@@ -19,7 +16,6 @@ import hu.webandmore.todo.utils.Util;
 public class TodoPresenter extends Presenter<TodoScreen> {
 
     private Context context;
-    private Paint p = new Paint();
 
     private DatabaseReference mDatabaseRef = Util.getDatabase().getReference();
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -54,8 +50,4 @@ public class TodoPresenter extends Presenter<TodoScreen> {
         alert.show();
     }
 
-    /*public void addNewGeofencArea(Location location) {
-        screen.addElementToGeofenceList(location.getAddress(),
-                location.getLatitude(), location.getLongitude());
-    }*/
 }

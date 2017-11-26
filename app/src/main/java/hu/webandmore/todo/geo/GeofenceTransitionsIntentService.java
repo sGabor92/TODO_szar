@@ -118,6 +118,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Issue the notification
+        assert mNotificationManager != null;
         mNotificationManager.notify(0, builder.build());
     }
 

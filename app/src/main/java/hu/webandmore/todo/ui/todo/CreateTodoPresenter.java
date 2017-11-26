@@ -3,7 +3,6 @@ package hu.webandmore.todo.ui.todo;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import hu.webandmore.todo.api.model.Location;
 import hu.webandmore.todo.api.model.Priority;
@@ -11,7 +10,7 @@ import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.ui.Presenter;
 import hu.webandmore.todo.utils.Util;
 
-public class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
+class CreateTodoPresenter extends Presenter<CreateTodoScreen> {
 
     private DatabaseReference mDatabaseRef = Util.getDatabase().getReference();
 
