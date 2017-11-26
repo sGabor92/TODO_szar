@@ -48,6 +48,11 @@
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <service android:name=".geo.GeofenceTransitionsIntentService" />
+        <service android:name=".notification.DeadlineReminderService" >
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
 
         <receiver android:name=".geo.GeofenceReceiver" >
             <intent-filter>

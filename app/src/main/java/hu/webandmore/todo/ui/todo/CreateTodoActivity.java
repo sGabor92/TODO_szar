@@ -239,9 +239,15 @@ public class CreateTodoActivity extends AppCompatActivity implements CreateTodoS
 
     View.OnClickListener editTodoDeadlineListener = new View.OnClickListener() {
         public void onClick(View v) {
-            new DatePickerDialog(v.getContext(), date, myCalendar
+            DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(), date, myCalendar
                     .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    myCalendar.get(Calendar.DAY_OF_MONTH));
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            datePickerDialog.show();
+
+            /*new DatePickerDialog(v.getContext(), date, myCalendar
+                    .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)).show();*/
         }
     };
 

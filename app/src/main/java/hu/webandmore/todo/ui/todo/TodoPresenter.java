@@ -34,7 +34,6 @@ public class TodoPresenter extends Presenter<TodoScreen> {
 
     private void deleteTodo(Todo todo) {
         mDatabaseRef.child(userTodoRef).child(todo.getCategory()).child(todo.getId()).removeValue();
-        System.out.println("DELETE REF: " + mDatabaseRef.child(userTodoRef).child(todo.getCategory()).child(todo.getId()).toString());
     }
 
     public void showDeletePopup(final Todo todo, final int position) {
@@ -55,8 +54,8 @@ public class TodoPresenter extends Presenter<TodoScreen> {
         alert.show();
     }
 
-    public void addNewGeofencArea(Location location) {
+    /*public void addNewGeofencArea(Location location) {
         screen.addElementToGeofenceList(location.getAddress(),
                 location.getLatitude(), location.getLongitude());
-    }
+    }*/
 }

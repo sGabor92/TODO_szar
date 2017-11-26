@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.hardware.TriggerEvent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +26,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.JobTrigger;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -53,6 +61,7 @@ import hu.webandmore.todo.R;
 import hu.webandmore.todo.adapter.TodoSectionsAdapter;
 import hu.webandmore.todo.api.model.Todo;
 import hu.webandmore.todo.geo.GeofenceErrorMessages;
+import hu.webandmore.todo.notification.DeadlineReminderService;
 import hu.webandmore.todo.utils.Util;
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter;
 
@@ -90,6 +99,7 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     private enum PendingGeofenceTask {
         ADD, REMOVE, NONE
     }
+
     private GeofencingClient mGeofencingClient;
     private ArrayList<Geofence> mGeofenceList;
     private PendingIntent mGeofencePendingIntent;
@@ -109,6 +119,8 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
 
     private boolean needNotification = true;
 
+    FirebaseJobDispatcher dispatcher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +129,8 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
         setContentView(R.layout.activity_todo);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
 
         mDatabaseRef = Util.getDatabase().getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -181,14 +195,20 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
                         if (todo.getLocation() != null) {
                             addElementToGeofenceList(todo.getLocation().getAddress(),
                                     todo.getLocation().getLatitude(),
-                                    todo.getLocation().getLongitude());
+                                    todo.getLocation().getLongitude(),
+                                    todo.getDeadline());
                         }
-                        long timeDiff = todo.getDeadline() - System.currentTimeMillis();
+                        /*long timeDiff = todo.getDeadline() - System.currentTimeMillis();
                         if(timeDiff >= 0 && timeDiff < 86400000) {
                             if(needNotification) {
                                 sendDeadlineNotification(todo.getName(), todo.getDeadline());
                             }
+                        }*/
+                        if (todo.getDeadline() != 0) {
+                            dispatchJob(todo.getId(), todo.getDeadline(),
+                                    todo.getName(), todo.getDeadlineString());
                         }
+
                         todosByCategory.add(todo);
                     }
                     todoSectionsAdapter = new TodoSectionsAdapter(
@@ -241,7 +261,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
         builder.addGeofences(mGeofenceList);
-        Log.i(TAG, "GEOFENCING LIST SIZE: " + mGeofenceList.size());
         return builder.build();
     }
 
@@ -267,7 +286,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
 
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
                 .addOnCompleteListener(this);
-        Log.i(TAG, "Geofences added!");
     }
 
     @OnClick(R.id.geofencingOff)
@@ -314,7 +332,6 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     }
 
     private PendingIntent getGeofencePendingIntent() {
-        Log.i(TAG, "PENDING INTENT");
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
@@ -324,20 +341,19 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
     }
 
     @Override
-    public void addElementToGeofenceList(String address, double latitude, double longitude) {
+    public void addElementToGeofenceList(String address, double latitude,
+                                         double longitude, long expirationDate) {
         mGeofenceList.add(new Geofence.Builder()
                 .setRequestId(address)
                 .setCircularRegion(
                         latitude,
                         longitude,
-                        100 // Geofences radius in meter
+                        250 // Geofences radius in meter
                 )
-                .setExpirationDuration(5000) //Expiration in milliseconds
+                .setExpirationDuration(expirationDate) //Expiration in milliseconds
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                         Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build());
-        Log.i(TAG, address + ":" + latitude + "," + longitude);
-        Log.i(TAG, "LIST SIZE: " + mGeofenceList.size());
 
     }
 
@@ -475,6 +491,40 @@ public class TodoActivity extends AppCompatActivity implements TodoScreen,
         assert notifyMgr != null;
         Log.i("Notification", "Sending notification");
         notifyMgr.notify(Util.getID(), builder.build());
+    }
+
+
+    // TODO - a 86400000 -t paraméterként átadva beállÍtható, hogy mikor kapjon értesítést, most 24 órával előtte kap - akár a TODO paraméterként is hordozhatná
+    public void dispatchJob(String jobID, long deadline, String todoName, String deadlineString) {
+        Bundle myExtrasBundle = new Bundle();
+        myExtrasBundle.putString("deadline", deadlineString);
+        myExtrasBundle.putString("name", todoName);
+        Log.i("DEADLINE", deadlineString);
+
+        int diffSecs = (int) (((deadline - 86400000) - System.currentTimeMillis()) / 1000);
+        Log.i(TAG, "Secs: " + diffSecs);
+
+        if (diffSecs >= 0) {
+            Job myJob = dispatcher.newJobBuilder()
+                    // the JobService that will be called
+                    .setService(DeadlineReminderService.class)
+                    // uniquely identifies the job
+                    .setTag(jobID)
+                    // one-off job
+                    .setRecurring(false)
+                    // don't persist past a device reboot
+                    .setLifetime(Lifetime.FOREVER)
+                    // start between 0 and 30 seconds from now
+                    .setTrigger(Trigger.executionWindow(diffSecs, (diffSecs + 30)))
+                    // don't overwrite an existing job with the same tag
+                    .setReplaceCurrent(false)
+                    // retry with exponential backoff
+                    .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                    .setExtras(myExtrasBundle)
+                    .build();
+
+            dispatcher.mustSchedule(myJob);
+        }
     }
 
 }
